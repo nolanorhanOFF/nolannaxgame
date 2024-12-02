@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeu de la Vitre Cassée avec Screamer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      height: 100vh;
+    }
+
+    #game-container {
+      position: relative;
+      width: 400px;
+      height: 300px;
+      background-color: #34495e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+    }
+
+    .glass {
+      width: 100px;
+      height: 200px;
+      background-color: #95a5a6;
+      border: 2px solid #7f8c8d;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: transform 0.1s;
+    }
+
+    #screamer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+    }
+
+    #screamer img {
+      width: 80%;
+      max-width: 800px;
+      animation: shake 0.5s ease-in-out infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(10px); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <div id="screamer">
+    <img src="images/screm.png" alt="Screamer">
+  </div>
+  <div id="glass-container">
+    <div class="glass" id="glass1"></div>
+    <div class="glass" id="glass2"></div>
+    <div class="glass" id="glass3"></div>
+  </div>
+</div>
+
+<script>
+  const screamer = document.getElementById("screamer");
+  const glasses = document.querySelectorAll(".glass");
+
+  let correctGlass = Math.floor(Math.random() * 3);  // Choisir la vitre correcte au hasard
+
+  // Réinitialiser le jeu
+  function resetGame() {
+    glasses.forEach(glass => {
+      glass.style.transform = "scale(1)";
+      glass.style.pointerEvents = "auto";  // Réactiver les clics sur les vitres
+    });
+    screamer.style.display = "none";  // Cacher le screamer après chaque réinitialisation
+    correctGlass = Math.floor(Math.random() * 3);  // Réinitialiser la vitre correcte
+  }
+
+  // Afficher l'image du screamer
+  function showScreamer() {
+    screamer.style.display = "flex";
+    setTimeout(() => {
+      alert("Mauvais choix !");
+      resetGame();
+    }, 5000);  // Le screamer reste visible pendant 5 secondes
+  }
+
+  // Lorsque l'utilisateur clique sur une vitre
+  glasses.forEach((glass, index) => {
+    glass.addEventListener("click", () => {
+      if (index === correctGlass) {
+        glass.style.transform = "scale(1.1)";  // Agrandir la vitre correcte
+        setTimeout(() => {
+          alert("Bravo ! Vous avez trouvé la bonne vitre.");
+          resetGame();
+        }, 1000);
+      } else {
+        glass.style.transform = "scale(0.9)";  // Réduire la vitre incorrecte
+        glass.style.pointerEvents = "none";  // Désactiver les clics sur la vitre incorrecte
+        showScreamer();  // Afficher le screamer
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
