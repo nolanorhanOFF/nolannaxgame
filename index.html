@@ -3,122 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jeu de la Vitre Cassée avec Screamer</title>
+  <title>Calcul Mental</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #000;
+      background-color: #111;
       color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0;
       height: 100vh;
+      margin: 0;
     }
 
-    #game-container {
-      position: relative;
-      width: 400px;
-      height: 300px;
-      background-color: #34495e;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .game-container {
+      text-align: center;
+      background-color: #222;
+      padding: 20px;
       border-radius: 10px;
-    }
-
-    .glass {
-      width: 100px;
-      height: 200px;
-      background-color: #95a5a6;
-      border: 2px solid #7f8c8d;
-      cursor: pointer;
-      margin: 0 10px;
-      transition: transform 0.1s;
-    }
-
-    #screamer {
-      position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      background-color: rgba(0, 0, 0, 0.9);
-      z-index: 1000;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
     }
 
-    #screamer img {
+    .question {
+      font-size: 2rem;
+      margin: 20px 0;
+    }
+
+    input[type="number"] {
+      font-size: 1.5rem;
+      padding: 10px;
       width: 80%;
-      max-width: 800px;
-      animation: shake 0.5s ease-in-out infinite;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
     }
 
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      50% { transform: translateX(10px); }
-      75% { transform: translateX(-10px); }
-      100% { transform: translateX(10px); }
+    .btn {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      border-radius: 5px;
+    }
+
+    .btn:hover {
+      background-color: #218838;
+    }
+
+    .result {
+      font-size: 1.5rem;
+      margin-top: 10px;
+    }
+
+    .score {
+      font-size: 1.5rem;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
-<div id="game-container">
-  <div id="screamer">
-    <img src="images/screm.png" alt="Screamer">
-  </div>
-  <div id="glass-container">
-    <div class="glass" id="glass1"></div>
-    <div class="glass" id="glass2"></div>
-    <div class="glass" id="glass3"></div>
-  </div>
+<div class="game-container">
+  <div class="question" id="question">Calcul en cours...</div>
+  <input type="number" id="answer" placeholder="Votre réponse" />
+  <button class="btn" id="submitBtn">Valider</button>
+  <div class="result" id="result"></div>
+  <div class="score" id="score">Score : 0</div>
 </div>
 
 <script>
-  const screamer = document.getElementById("screamer");
-  const glasses = document.querySelectorAll(".glass");
+  let score = 0;
+  let correctAnswer = 0;
+  const questionElement = document.getElementById('question');
+  const answerElement = document.getElementById('answer');
+  const resultElement = document.getElementById('result');
+  const scoreElement = document.getElementById('score');
 
-  let correctGlass = Math.floor(Math.random() * 3);  // Choisir la vitre correcte au hasard
+  // Fonction pour générer une nouvelle question avec addition ou soustraction
+  function generateQuestion() {
+    const num1 = Math.floor(Math.random() * 101); // Nombres entre 0 et 100
+    const num2 = Math.floor(Math.random() * 101); // Nombres entre 0 et 100
+    const operator = Math.random() > 0.5 ? '+' : '-'; // Choisir entre + et -
 
-  // Réinitialiser le jeu
-  function resetGame() {
-    glasses.forEach(glass => {
-      glass.style.transform = "scale(1)";
-      glass.style.pointerEvents = "auto";  // Réactiver les clics sur les vitres
-    });
-    screamer.style.display = "none";  // Cacher le screamer après chaque réinitialisation
-    correctGlass = Math.floor(Math.random() * 3);  // Réinitialiser la vitre correcte
+    if (operator === '+') {
+      correctAnswer = num1 + num2;
+      questionElement.textContent = `${num1} + ${num2}`;
+    } else {
+      correctAnswer = num1 - num2;
+      questionElement.textContent = `${num1} - ${num2}`;
+    }
   }
 
-  // Afficher l'image du screamer
-  function showScreamer() {
-    screamer.style.display = "flex";
-    setTimeout(() => {
-      alert("Mauvais choix !");
-      resetGame();
-    }, 5000);  // Le screamer reste visible pendant 5 secondes
+  // Vérifier la réponse de l'utilisateur
+  function checkAnswer() {
+    const userAnswer = parseInt(answerElement.value, 10);
+
+    if (userAnswer === correctAnswer) {
+      resultElement.textContent = '✅ Bonne réponse!';
+      resultElement.style.color = '#28a745';
+      score += 10;
+    } else {
+      resultElement.textContent = `❌ Mauvaise réponse. La bonne réponse était ${correctAnswer}`;
+      resultElement.style.color = '#dc3545';
+      score -= 5;
+    }
+
+    scoreElement.textContent = `Score : ${score}`;
+    answerElement.value = ''; // Réinitialiser le champ de réponse
+    generateQuestion(); // Générer une nouvelle question
   }
 
-  // Lorsque l'utilisateur clique sur une vitre
-  glasses.forEach((glass, index) => {
-    glass.addEventListener("click", () => {
-      if (index === correctGlass) {
-        glass.style.transform = "scale(1.1)";  // Agrandir la vitre correcte
-        setTimeout(() => {
-          alert("Bravo ! Vous avez trouvé la bonne vitre.");
-          resetGame();
-        }, 1000);
-      } else {
-        glass.style.transform = "scale(0.9)";  // Réduire la vitre incorrecte
-        glass.style.pointerEvents = "none";  // Désactiver les clics sur la vitre incorrecte
-        showScreamer();  // Afficher le screamer
-      }
-    });
-  });
+  // Ajouter l'événement de validation au bouton
+  document.getElementById('submitBtn').addEventListener('click', checkAnswer);
+
+  // Initialiser la première question
+  generateQuestion();
 </script>
 
 </body>
