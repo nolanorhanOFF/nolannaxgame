@@ -24,6 +24,50 @@
       width: 100%;
       max-width: 400px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      position: relative;
+    }
+
+    .back-arrow {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .settings-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 100%;
+      background-color: #333;
+      color: #fff;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .settings-panel.open {
+      transform: translateX(0);
+    }
+
+    .settings-panel h2 {
+      margin-top: 0;
     }
 
     .question {
@@ -49,10 +93,20 @@
       cursor: pointer;
       font-size: 1.2rem;
       border-radius: 5px;
+      margin: 5px;
     }
 
     .btn:hover {
       background-color: #218838;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      width: 80%;
     }
 
     .result {
@@ -64,65 +118,200 @@
       font-size: 1.5rem;
       margin-top: 20px;
     }
+
+    .hidden {
+      display: none;
+    }
+
+    .music-controls label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .music-controls input[type="range"] {
+      width: 100%;
+    }
+
+    .close-settings {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
 
 <div class="game-container">
-  <div class="question" id="question">Calcul en cours...</div>
-  <input type="number" id="answer" placeholder="Votre réponse" />
-  <button class="btn" id="submitBtn">Valider</button>
-  <div class="result" id="result"></div>
-  <div class="score" id="score">Score : 0</div>
+  <a href="#" class="back-arrow hidden" id="backArrow">⬅</a>
+  <a href="#" class="settings-btn" id="settingsBtn">⚙</a>
+  
+  <h1>Calcul Mental</h1>
+  
+  <!-- Sélection des paramètres -->
+  <div id="settings">
+    <div>
+      <label for="difficulty">Niveau de difficulté :</label><br />
+      <select id="difficulty">
+        <option value="easy">Facile</option>
+        <option value="medium">Moyen</option>
+        <option value="hard">Difficile</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="operation">Type d'opérations :</label><br />
+      <select id="operation">
+        <option value="addition">Addition</option>
+        <option value="subtraction">Soustraction</option>
+        <option value="mixed">Mixte (les deux)</option>
+      </select>
+    </div>
+
+    <button class="btn" id="startBtn">Commencer le jeu</button>
+  </div>
+  
+  <!-- Jeu actif -->
+  <div id="gameArea" class="hidden">
+    <div class="question" id="question">Calcul en cours...</div>
+    <input type="number" id="answer" placeholder="Votre réponse" />
+    <button class="btn" id="submitBtn">Valider</button>
+    <div class="result" id="result"></div>
+    <div class="score" id="score">Score : 0</div>
+  </div>
 </div>
+
+<!-- Panneau latéral des paramètres -->
+<div class="settings-panel" id="settingsPanel">
+  <span class="close-settings" id="closeSettingsBtn">×</span>
+  <h2>Paramètres</h2>
+  <label>
+    <input type="checkbox" id="toggleMusic" checked> Musique activée
+  </label>
+  <label for="volumeControl">Volume :</label>
+  <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+</div>
+
+<audio id="backgroundMusic" loop>
+  <source src="music/music.mp3" type="audio/mpeg">
+  Votre navigateur ne supporte pas la lecture audio.
+</audio>
+
+<audio id="correctAnswerSound">
+  <source src="music/bonnereponse.mp3" type="audio/mpeg">
+  Votre navigateur ne supporte pas la lecture audio.
+</audio>
+
+<audio id="wrongAnswerSound">
+  <source src="music/mauvaisereponse.mp3" type="audio/mpeg">
+  Votre navigateur ne supporte pas la lecture audio.
+</audio>
 
 <script>
   let score = 0;
   let correctAnswer = 0;
-  const questionElement = document.getElementById('question');
-  const answerElement = document.getElementById('answer');
-  const resultElement = document.getElementById('result');
-  const scoreElement = document.getElementById('score');
+  const questionElement = document.getElementById("question");
+  const answerElement = document.getElementById("answer");
+  const resultElement = document.getElementById("result");
+  const scoreElement = document.getElementById("score");
+  const settings = document.getElementById("settings");
+  const gameArea = document.getElementById("gameArea");
+  const backArrow = document.getElementById("backArrow");
+  const startBtn = document.getElementById("startBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsPanel = document.getElementById("settingsPanel");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const difficultySelect = document.getElementById("difficulty");
+  const operationSelect = document.getElementById("operation");
+  const backgroundMusic = document.getElementById("backgroundMusic");
+  const toggleMusic = document.getElementById("toggleMusic");
+  const volumeControl = document.getElementById("volumeControl");
+  const correctAnswerSound = document.getElementById("correctAnswerSound");
+  const wrongAnswerSound = document.getElementById("wrongAnswerSound");
 
-  // Fonction pour générer une nouvelle question avec addition ou soustraction
+  const difficultyLevels = {
+    easy: 10,
+    medium: 50,
+    hard: 100
+  };
+
+  // Musique
+  backgroundMusic.volume = 0.5;
+  backgroundMusic.play();
+
+  toggleMusic.addEventListener("change", () => {
+    if (toggleMusic.checked) {
+      backgroundMusic.play();
+    } else {
+      backgroundMusic.pause();
+    }
+  });
+
+  volumeControl.addEventListener("input", () => {
+    backgroundMusic.volume = volumeControl.value;
+  });
+
+  settingsBtn.addEventListener("click", () => {
+    settingsPanel.classList.add("open");
+  });
+
+  closeSettingsBtn.addEventListener("click", () => {
+    settingsPanel.classList.remove("open");
+  });
+
+  // Commencer le jeu
+  startBtn.addEventListener("click", () => {
+    score = 0;
+    scoreElement.textContent = "Score : 0";
+    resultElement.textContent = "";
+    settings.classList.add("hidden");
+    gameArea.classList.remove("hidden");
+    backArrow.classList.remove("hidden");
+    generateQuestion();
+  });
+
+  // Revenir au menu
+  backArrow.addEventListener("click", () => {
+    settings.classList.remove("hidden");
+    gameArea.classList.add("hidden");
+    backArrow.classList.add("hidden");
+  });
+
+  // Générer une nouvelle question
   function generateQuestion() {
-    const num1 = Math.floor(Math.random() * 101); // Nombres entre 0 et 100
-    const num2 = Math.floor(Math.random() * 101); // Nombres entre 0 et 100
-    const operator = Math.random() > 0.5 ? '+' : '-'; // Choisir entre + et -
+    const difficulty = difficultyLevels[difficultySelect.value];
+    const operation = operationSelect.value;
 
-    if (operator === '+') {
+    let num1 = Math.floor(Math.random() * difficulty);
+    let num2 = Math.floor(Math.random() * difficulty);
+
+    if (operation === "addition" || operation === "mixed") {
+      questionElement.textContent = `${num1} + ${num2} = ?`;
       correctAnswer = num1 + num2;
-      questionElement.textContent = `${num1} + ${num2}`;
-    } else {
+    } else if (operation === "subtraction" || operation === "mixed") {
+      questionElement.textContent = `${num1} - ${num2} = ?`;
       correctAnswer = num1 - num2;
-      questionElement.textContent = `${num1} - ${num2}`;
     }
   }
 
-  // Vérifier la réponse de l'utilisateur
-  function checkAnswer() {
-    const userAnswer = parseInt(answerElement.value, 10);
-
+  // Soumettre la réponse
+  document.getElementById("submitBtn").addEventListener("click", () => {
+    const userAnswer = parseInt(answerElement.value);
     if (userAnswer === correctAnswer) {
-      resultElement.textContent = '✅ Bonne réponse!';
-      resultElement.style.color = '#28a745';
-      score += 10;
+      score++;
+      scoreElement.textContent = `Score : ${score}`;
+      resultElement.textContent = "Bonne réponse ! 🎉";
+      correctAnswerSound.play();
     } else {
-      resultElement.textContent = `❌ Mauvaise réponse. La bonne réponse était ${correctAnswer}`;
-      resultElement.style.color = '#dc3545';
-      score -= 5;
+      resultElement.textContent = "Mauvaise réponse. 😞";
+      wrongAnswerSound.play();
     }
-
-    scoreElement.textContent = `Score : ${score}`;
-    answerElement.value = ''; // Réinitialiser le champ de réponse
-    generateQuestion(); // Générer une nouvelle question
-  }
-
-  // Ajouter l'événement de validation au bouton
-  document.getElementById('submitBtn').addEventListener('click', checkAnswer);
-
-  // Initialiser la première question
-  generateQuestion();
+    generateQuestion();
+    answerElement.value = "";
+  });
 </script>
 
 </body>
