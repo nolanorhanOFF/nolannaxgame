@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calcul Mental</title>
+  
+  <!-- Ajouter le favicon -->
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -284,7 +288,6 @@
   function generateQuestion() {
     const difficulty = difficultyLevels[difficultySelect.value];
     const operation = operationSelect.value;
-
     let num1 = Math.floor(Math.random() * difficulty);
     let num2 = Math.floor(Math.random() * difficulty);
 
