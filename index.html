@@ -145,6 +145,43 @@
       cursor: pointer;
       color: #fff;
     }
+
+    .scoreboard {
+      margin-top: 20px;
+      background-color: #333;
+      padding: 15px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 350px;
+      box-sizing: border-box;
+    }
+
+    .scoreboard table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .scoreboard th, .scoreboard td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #555;
+    }
+
+    .scoreboard th {
+      background-color: #444;
+    }
+
+    .scoreboard td {
+      background-color: #333;
+    }
+
+    .music-toggle {
+      font-size: 2rem;
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -171,7 +208,8 @@
       <select id="operation">
         <option value="addition">Addition</option>
         <option value="subtraction">Soustraction</option>
-        <option value="mixed">Mixte (les deux)</option>
+        <option value="multiplication">Multiplication</option>
+        <option value="mixed">Mixte (les trois)</option>
       </select>
     </div>
 
@@ -186,6 +224,30 @@
     <div class="result" id="result"></div>
     <div class="score" id="score">Score : 0</div>
   </div>
+</div>
+
+<!-- Tableau des scores -->
+<div class="scoreboard">
+  <h3>Tableau des Scores</h3>
+  <table>
+    <tr>
+      <th>Nom</th>
+      <th>Score</th>
+    </tr>
+    <tr>
+      <td>liamzerox</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>Joueur2</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>Joueur3</td>
+      <td>50</td>
+    </tr>
+    <!-- Vous pouvez ajouter plus de joueurs ici -->
+  </table>
 </div>
 
 <!-- Panneau latéral des paramètres -->
@@ -228,63 +290,38 @@
   const settingsBtn = document.getElementById("settingsBtn");
   const settingsPanel = document.getElementById("settingsPanel");
   const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const submitBtn = document.getElementById("submitBtn");
   const difficultySelect = document.getElementById("difficulty");
   const operationSelect = document.getElementById("operation");
+
   const backgroundMusic = document.getElementById("backgroundMusic");
-  const toggleMusic = document.getElementById("toggleMusic");
-  const volumeControl = document.getElementById("volumeControl");
   const correctAnswerSound = document.getElementById("correctAnswerSound");
   const wrongAnswerSound = document.getElementById("wrongAnswerSound");
+  const volumeControl = document.getElementById("volumeControl");
+  const toggleMusic = document.getElementById("toggleMusic");
+  const musicToggle = document.createElement("div");
+  musicToggle.className = "music-toggle";
+  musicToggle.innerHTML = "🔊";  // Son activé par défaut
 
-  const difficultyLevels = {
-    easy: 10,
-    medium: 50,
-    hard: 100
-  };
-
-  // Musique
-  backgroundMusic.volume = 0.5;
-  backgroundMusic.play();
-
-  toggleMusic.addEventListener("change", () => {
-    if (toggleMusic.checked) {
+  // Bascule entre son activé/désactivé
+  musicToggle.addEventListener("click", () => {
+    if (backgroundMusic.paused) {
       backgroundMusic.play();
+      musicToggle.innerHTML = "🔊"; // Son activé
     } else {
       backgroundMusic.pause();
+      musicToggle.innerHTML = "🔈"; // Son désactivé
     }
   });
 
+  document.body.appendChild(musicToggle);
+
+  // Gérer le volume
   volumeControl.addEventListener("input", () => {
     backgroundMusic.volume = volumeControl.value;
   });
 
-  settingsBtn.addEventListener("click", () => {
-    settingsPanel.classList.add("open");
-  });
-
-  closeSettingsBtn.addEventListener("click", () => {
-    settingsPanel.classList.remove("open");
-  });
-
-  // Commencer le jeu
-  startBtn.addEventListener("click", () => {
-    score = 0;
-    scoreElement.textContent = "Score : 0";
-    resultElement.textContent = "";
-    settings.classList.add("hidden");
-    gameArea.classList.remove("hidden");
-    backArrow.classList.remove("hidden");
-    generateQuestion();
-  });
-
-  // Revenir au menu
-  backArrow.addEventListener("click", () => {
-    settings.classList.remove("hidden");
-    gameArea.classList.add("hidden");
-    backArrow.classList.add("hidden");
-  });
-
-  // Générer une nouvelle question
+  // Afficher la question
   function generateQuestion() {
     const difficulty = difficultyLevels[difficultySelect.value];
     const operation = operationSelect.value;
@@ -297,25 +334,50 @@
     } else if (operation === "subtraction" || operation === "mixed") {
       questionElement.textContent = `${num1} - ${num2} = ?`;
       correctAnswer = num1 - num2;
+    } else if (operation === "multiplication" || operation === "mixed") {
+      num1 = Math.floor(Math.random() * 10) + 1;  // Limiter la multiplication entre 1 et 10
+      num2 = Math.floor(Math.random() * 10) + 1;  // Limiter la multiplication entre 1 et 10
+      questionElement.textContent = `${num1} × ${num2} = ?`;
+      correctAnswer = num1 * num2;
     }
   }
 
+  // Lancer le jeu
+  startBtn.addEventListener("click", () => {
+    settings.classList.add("hidden");
+    gameArea.classList.remove("hidden");
+    generateQuestion();
+  });
+
   // Soumettre la réponse
-  document.getElementById("submitBtn").addEventListener("click", () => {
+  submitBtn.addEventListener("click", () => {
     const userAnswer = parseInt(answerElement.value);
     if (userAnswer === correctAnswer) {
       score++;
       scoreElement.textContent = `Score : ${score}`;
       resultElement.textContent = "Bonne réponse ! 🎉";
-      correctAnswerSound.play();
+      correctAnswerSound.play(); // Jouer le son pour bonne réponse
     } else {
       resultElement.textContent = "Mauvaise réponse. 😞";
-      wrongAnswerSound.play();
+      wrongAnswerSound.play(); // Jouer le son pour mauvaise réponse
     }
     generateQuestion();
     answerElement.value = "";
   });
-</script>
 
+  // Afficher les paramètres
+  settingsBtn.addEventListener("click", () => {
+    settingsPanel.classList.add("open");
+  });
+
+  // Fermer les paramètres
+  closeSettingsBtn.addEventListener("click", () => {
+    settingsPanel.classList.remove("open");
+  });
+
+  // Lancer la musique au démarrage
+  backgroundMusic.play();
+
+</script>
 </body>
 </html>
