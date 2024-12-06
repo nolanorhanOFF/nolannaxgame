@@ -155,7 +155,6 @@
         let score = 0;
         let playerName = "liamzerox"; // Pseudo par défaut
         let scores = [
-            { pseudo: "Jhon", difficulty: "moyen", operation: "mixte", score: 185 } // Jhon avec un score de 185
             { pseudo: "liamzerox", difficulty: "easy", operation: "addition", score: 100 } // Liam avec un score de 100
         ];
 
@@ -179,16 +178,16 @@
             }
 
             if (operationType === "addition") {
-                questionElement.textContent = `${num1} + ${num2} = ?`;
+                questionElement.textContent = ${num1} + ${num2} = ?;
                 correctAnswer = num1 + num2;
             } else if (operationType === "subtraction") {
                 if (num1 < num2) [num1, num2] = [num2, num1];
-                questionElement.textContent = `${num1} - ${num2} = ?`;
+                questionElement.textContent = ${num1} - ${num2} = ?;
                 correctAnswer = num1 - num2;
             } else if (operationType === "multiplication") {
                 num1 = Math.floor(Math.random() * 10) + 1;
                 num2 = Math.floor(Math.random() * 10) + 1;
-                questionElement.textContent = `${num1} × ${num2} = ?`;
+                questionElement.textContent = ${num1} × ${num2} = ?;
                 correctAnswer = num1 * num2;
             }
         }
@@ -206,11 +205,11 @@
                 messageElement.textContent = "Bonne réponse ! 🎉";
                 soundCorrect.play();
             } else {
-                messageElement.textContent = `Mauvaise réponse. La bonne réponse était : ${correctAnswer}.`;
+                messageElement.textContent = Mauvaise réponse. La bonne réponse était : ${correctAnswer}.;
                 soundIncorrect.play();
             }
 
-            scoreElement.textContent = `Score : ${score}`;
+            scoreElement.textContent = Score : ${score};
             answerInput.value = "";
             generateQuestion();
         }
@@ -227,7 +226,7 @@
 
         // Afficher le tableau des scores
         function displayScores() {
-            scoreTableBody.innerHTML = scores.map((entry, index) => `
+            scoreTableBody.innerHTML = scores.map((entry, index) => 
                 <tr>
                     <td>${index + 1}</td>
                     <td>${entry.pseudo}</td>
@@ -235,7 +234,7 @@
                     <td>${entry.operation}</td>
                     <td>${entry.score}</td>
                 </tr>
-            `).join("");
+            ).join("");
         }
 
         // Associer les événements
@@ -243,7 +242,7 @@
             gameContainer.style.display = "block";
             homeContainer.style.display = "none";
             score = 0;
-            scoreElement.textContent = `Score : ${score}`;
+            scoreElement.textContent = Score : ${score};
             generateQuestion();
         });
 
