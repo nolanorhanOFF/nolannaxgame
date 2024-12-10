@@ -3,270 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu Mathématique</title>
+    <title>Numérika - Maintenance</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #121212;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ffffff;
+        }
+        .container {
             text-align: center;
+            max-width: 600px;
             padding: 20px;
-            background-color: #121212; /* Fond sombre */
-            color: #e0e0e0; /* Texte clair */
+            background: #1e1e1e;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
         }
         h1 {
-            color: #00bcd4; /* Bleu cyan */
+            color: #f39c12;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
-        #gameContainer, #homeContainer, #scoreTableContainer {
-            display: none;
-            margin-top: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #00bcd4; /* Couleur des boutons */
-            color: white;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0097a7; /* Hover couleur */
-        }
-        input {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            background-color: #333; /* Fond sombre pour les inputs */
-            color: white; /* Texte blanc pour les inputs */
-        }
-        .message {
-            margin-top: 10px;
+        p {
             font-size: 18px;
+            line-height: 1.6;
+            margin: 10px 0;
         }
-        table {
-            margin: 0 auto;
-            border-collapse: collapse;
-            width: 80%;
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #aaaaaa;
         }
-        th, td {
-            border: 1px solid #555; /* Bordures sombres */
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #00bcd4; /* Bleu cyan pour l'en-tête */
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #333; /* Lignes paires avec fond sombre */
-        }
-        tr:nth-child(odd) {
-            background-color: #444; /* Lignes impaires */
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Jeu Mathématique</h1>
-
-    <!-- Page d'accueil -->
-    <div id="homeContainer">
-        <h2>Choisissez votre difficulté</h2>
-        <select id="difficultySelect">
-            <option value="easy">Facile</option>
-            <option value="medium">Moyen</option>
-            <option value="hard">Difficile</option>
-        </select>
-        <h2>Choisissez votre opération</h2>
-        <select id="operationSelect">
-            <option value="addition">Addition</option>
-            <option value="subtraction">Soustraction</option>
-            <option value="multiplication">Multiplication</option>
-            <option value="mixed">Mixte</option>
-        </select>
-        <br><br>
-        <button id="startGame">Commencer le jeu</button>
-        <button id="viewScores">Tableau des scores</button>
+    <div class="container">
+        <img src="maintenance.gif" alt="Maintenance en cours">
+        <h1>Numérika 🚧</h1>
+        <p>
+            Une maintenance est actuellement en cours pour améliorer votre expérience.  
+            Nous serons de retour d'ici ce week-end !
+        </p>
+        <div class="footer">
+            © 2024 - Numérika | Tous droits réservés.
+        </div>
     </div>
-
-    <!-- Contenu du jeu -->
-    <div id="gameContainer">
-        <h2 id="questionElement"></h2>
-        <input type="number" id="answerInput" placeholder="Votre réponse">
-        <br>
-        <button id="submitAnswer">Valider</button>
-        <button id="skipQuestion">Passer</button>
-        <h3 id="scoreElement">Score : 0</h3>
-        <p class="message" id="messageElement"></p>
-        <button id="returnToHome">🔙 Revenir au début</button>
-    </div>
-
-    <!-- Tableau des scores -->
-    <div id="scoreTableContainer">
-        <h2>Tableau des Scores</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Pseudo</th>
-                    <th>Difficulté</th>
-                    <th>Opération</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody id="scoreTableBody">
-                <!-- Les scores seront générés ici -->
-            </tbody>
-        </table>
-        <br>
-        <button id="returnFromScores">🔙 Revenir au début</button>
-    </div>
-
-    <!-- Sons -->
-    <audio id="soundCorrect" src="music/bonnereponse.mp3"></audio>
-    <audio id="soundIncorrect" src="music/mauvaisereponse.mp3"></audio>
-
-    <script>
-        // Récupérer les éléments HTML
-        const homeContainer = document.getElementById("homeContainer");
-        const gameContainer = document.getElementById("gameContainer");
-        const scoreTableContainer = document.getElementById("scoreTableContainer");
-        const difficultySelect = document.getElementById("difficultySelect");
-        const operationSelect = document.getElementById("operationSelect");
-        const questionElement = document.getElementById("questionElement");
-        const answerInput = document.getElementById("answerInput");
-        const submitAnswer = document.getElementById("submitAnswer");
-        const skipQuestion = document.getElementById("skipQuestion");
-        const scoreElement = document.getElementById("scoreElement");
-        const messageElement = document.getElementById("messageElement");
-        const startGame = document.getElementById("startGame");
-        const viewScores = document.getElementById("viewScores");
-        const returnToHome = document.getElementById("returnToHome");
-        const returnFromScores = document.getElementById("returnFromScores");
-        const scoreTableBody = document.getElementById("scoreTableBody");
-
-        // Sons
-        const soundCorrect = document.getElementById("soundCorrect");
-        const soundIncorrect = document.getElementById("soundIncorrect");
-
-        // Variables globales
-        let correctAnswer = 0;
-        let score = 0;
-        let playerName = "liamzerox"; // Pseudo par défaut
-        let scores = [
-            { pseudo: "liamzerox", difficulty: "easy", operation: "addition", score: 100 } // Liam avec un score de 100
-        ];
-
-        // Limites de difficulté
-        const difficultyLevels = {
-            easy: 10,
-            medium: 50,
-            hard: 100
-        };
-
-        // Fonction pour générer une question
-        function generateQuestion() {
-            const difficulty = difficultyLevels[difficultySelect.value];
-            let num1 = Math.floor(Math.random() * difficulty);
-            let num2 = Math.floor(Math.random() * difficulty);
-            let operationType = operationSelect.value;
-
-            if (operationType === "mixed") {
-                const operations = ["addition", "subtraction", "multiplication"];
-                operationType = operations[Math.floor(Math.random() * operations.length)];
-            }
-
-            if (operationType === "addition") {
-                questionElement.textContent = ${num1} + ${num2} = ?;
-                correctAnswer = num1 + num2;
-            } else if (operationType === "subtraction") {
-                if (num1 < num2) [num1, num2] = [num2, num1];
-                questionElement.textContent = ${num1} - ${num2} = ?;
-                correctAnswer = num1 - num2;
-            } else if (operationType === "multiplication") {
-                num1 = Math.floor(Math.random() * 10) + 1;
-                num2 = Math.floor(Math.random() * 10) + 1;
-                questionElement.textContent = ${num1} × ${num2} = ?;
-                correctAnswer = num1 * num2;
-            }
-        }
-
-        // Vérifier la réponse de l'utilisateur
-        function checkAnswer() {
-            const userAnswer = parseInt(answerInput.value, 10);
-            if (isNaN(userAnswer)) {
-                messageElement.textContent = "Veuillez entrer une réponse valide.";
-                return;
-            }
-
-            if (userAnswer === correctAnswer) {
-                score++;
-                messageElement.textContent = "Bonne réponse ! 🎉";
-                soundCorrect.play();
-            } else {
-                messageElement.textContent = Mauvaise réponse. La bonne réponse était : ${correctAnswer}.;
-                soundIncorrect.play();
-            }
-
-            scoreElement.textContent = Score : ${score};
-            answerInput.value = "";
-            generateQuestion();
-        }
-
-        // Ajouter le score au tableau
-        function saveScore() {
-            scores.push({
-                pseudo: playerName,
-                difficulty: difficultySelect.value,
-                operation: operationSelect.value,
-                score: score
-            });
-        }
-
-        // Afficher le tableau des scores
-        function displayScores() {
-            scoreTableBody.innerHTML = scores.map((entry, index) => 
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${entry.pseudo}</td>
-                    <td>${entry.difficulty}</td>
-                    <td>${entry.operation}</td>
-                    <td>${entry.score}</td>
-                </tr>
-            ).join("");
-        }
-
-        // Associer les événements
-        startGame.addEventListener("click", () => {
-            gameContainer.style.display = "block";
-            homeContainer.style.display = "none";
-            score = 0;
-            scoreElement.textContent = Score : ${score};
-            generateQuestion();
-        });
-
-        submitAnswer.addEventListener("click", checkAnswer);
-        skipQuestion.addEventListener("click", generateQuestion);
-
-        returnToHome.addEventListener("click", () => {
-            gameContainer.style.display = "none";
-            homeContainer.style.display = "block";
-        });
-
-        viewScores.addEventListener("click", () => {
-            homeContainer.style.display = "none";
-            scoreTableContainer.style.display = "block";
-            displayScores();
-        });
-
-        returnFromScores.addEventListener("click", () => {
-            scoreTableContainer.style.display = "none";
-            homeContainer.style.display = "block";
-        });
-
-        // Initialiser la page d'accueil
-        homeContainer.style.display = "block";
-    </script>
 </body>
 </html>
