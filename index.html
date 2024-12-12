@@ -1,67 +1,223 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numérika - Maintenance</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Ajout du favicon -->
+    <title>Numérika</title>
+    <link rel="icon" href="favicon.ico">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #121212;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background: linear-gradient(to bottom, #121212, #1e1e1e);
             color: #ffffff;
         }
-        .container {
-            text-align: center;
-            max-width: 600px;
+        header {
+            background: #222;
             padding: 20px;
-            background: #1e1e1e;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
+            text-align: center;
         }
         h1 {
-            color: #f39c12;
-            font-size: 2.5em;
-            margin-bottom: 20px;
+            margin: 0;
+            color: #f0db4f;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
-        p {
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            background: #f0db4f;
+            color: #222;
             font-size: 18px;
-            line-height: 1.6;
-            margin: 10px 0;
+            cursor: pointer;
+            transition: background 0.3s ease;
         }
-        .footer {
+        .button:hover {
+            background: #e5c643;
+        }
+        .arrow {
             margin-top: 20px;
-            font-size: 14px;
-            color: #aaaaaa;
+            font-size: 24px;
+            color: #f0db4f;
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.2s;
         }
-        img {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 10px;
+        .arrow:hover {
+            transform: translateY(-5px);
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: center;
+        }
+        table th {
+            background: #333;
+            color: #f0db4f;
+        }
+        #feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        footer {
+            background: #222;
+            color: #f0db4f;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Logo de Numérika -->
-        <img src="logo.png" alt="Logo Numérika">
-        <img src="maintenance.gif" alt="Maintenance en cours">
-        <h1>Numérika 🚧</h1>
-        <p>
-            Une maintenance est actuellement en cours pour améliorer votre expérience.  
-            Nous serons de retour d'ici ce week-end !
-        </p>
-        <div class="footer">
-            © 2024 - Numérika | Tous droits réservés.
-        </div>
-    </div>
+
+<header>
+    <h1>Numérika</h1>
+</header>
+
+<div class="container" id="start-screen">
+    <h2>Choisissez votre opération :</h2>
+    <button class="button" onclick="chooseOperation('addition')">Addition</button>
+    <button class="button" onclick="chooseOperation('soustraction')">Soustraction</button>
+    <button class="button" onclick="chooseOperation('multiplication')">Multiplication</button>
+    <button class="button" onclick="chooseOperation('mixte')">Mixte</button>
+</div>
+
+<div class="container" id="difficulty-screen" style="display: none;">
+    <h2>Choisissez une difficulté :</h2>
+    <button class="button" onclick="startGame('easy')">Facile</button>
+    <button class="button" onclick="startGame('medium')">Moyen</button>
+    <button class="button" onclick="startGame('hard')">Difficile</button>
+    <div class="arrow" onclick="showStartScreen()">&#x21A9; Retour</div>
+</div>
+
+<div class="container" id="game-screen" style="display: none;">
+    <h2 id="question"></h2>
+    <input type="number" id="answer" placeholder="Votre réponse">
+    <button class="button" onclick="submitAnswer()">Valider</button>
+    <div class="arrow" onclick="showStartScreen()">&#x21A9; Retour</div>
+    <div id="feedback"></div>
+</div>
+
+<div class="container" id="score-screen" style="display: none;">
+    <h2>Tableau des Scores</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Pseudo</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id="score-table-body">
+            <!-- Les scores seront insérés ici -->
+        </tbody>
+    </table>
+    <div class="arrow" onclick="showStartScreen()">&#x21A9; Retour</div>
+</div>
+
+<audio id="correct-sound" src="music/bonnereponse.mp3"></audio>
+<audio id="wrong-sound" src="music/mauvaisereponse.mp3"></audio>
+
+<script>
+    let currentOperation = '';
+    let currentDifficulty = '';
+    let score = 0;
+
+    function chooseOperation(operation) {
+        currentOperation = operation;
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('difficulty-screen').style.display = 'block';
+    }
+
+    function startGame(difficulty) {
+        currentDifficulty = difficulty;
+        score = 0;
+        document.getElementById('difficulty-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+        generateQuestion();
+    }
+
+    function generateQuestion() {
+        let num1 = Math.ceil(Math.random() * 10);
+        let num2 = Math.ceil(Math.random() * 10);
+
+        let question;
+
+        switch (currentOperation) {
+            case 'addition':
+                question = `${num1} + ${num2}`;
+                break;
+            case 'soustraction':
+                question = `${Math.max(num1, num2)} - ${Math.min(num1, num2)}`;
+                break;
+            case 'multiplication':
+                question = `${num1} x ${num2}`;
+                break;
+            case 'mixte':
+                const operations = ['+', '-', 'x'];
+                const randomOp = operations[Math.floor(Math.random() * operations.length)];
+                question = randomOp === '+' ? `${num1} + ${num2}` :
+                          randomOp === '-' ? `${Math.max(num1, num2)} - ${Math.min(num1, num2)}` :
+                          `${num1} x ${num2}`;
+                break;
+        }
+
+        document.getElementById('question').textContent = question;
+    }
+
+    function submitAnswer() {
+        const question = document.getElementById('question').textContent;
+        const userAnswer = parseInt(document.getElementById('answer').value);
+        const correctSound = document.getElementById('correct-sound');
+        const wrongSound = document.getElementById('wrong-sound');
+        let correctAnswer;
+
+        if (question.includes('+')) correctAnswer = parseInt(question.split('+')[0]) + parseInt(question.split('+')[1]);
+        if (question.includes('-')) correctAnswer = parseInt(question.split('-')[0]) - parseInt(question.split('-')[1]);
+        if (question.includes('x')) correctAnswer = parseInt(question.split('x')[0]) * parseInt(question.split('x')[1]);
+
+        const feedback = document.getElementById('feedback');
+
+        if (userAnswer === correctAnswer) {
+            score++;
+            feedback.textContent = 'Bonne réponse ! ✅';
+            feedback.style.color = 'lime';
+            correctSound.play();
+        } else {
+            feedback.textContent = `Mauvaise réponse ! ❌ La bonne réponse était ${correctAnswer}`;
+            feedback.style.color = 'red';
+            wrongSound.play();
+        }
+
+        document.getElementById('answer').value = '';
+        generateQuestion();
+    }
+
+    function showStartScreen() {
+        document.getElementById('start-screen').style.display = 'block';
+        document.getElementById('difficulty-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('score-screen').style.display = 'none';
+    }
+</script>
+
+<footer>
+    © 2024 Numérika
+</footer>
+
 </body>
 </html>
