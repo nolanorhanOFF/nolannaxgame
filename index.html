@@ -210,7 +210,7 @@
             const niveauMessage = document.getElementById('niveau-message');
             const exerciceContainer = document.getElementById('exercice-container');
             
-            niveauMessage.innerHTML = <h3>Opération: ${operation.charAt(0).toUpperCase() + operation.slice(1)} | Niveau: ${niveau.charAt(0).toUpperCase() + niveau.slice(1)}</h3>;
+            niveauMessage.innerHTML = `<h3>Opération: ${operation.charAt(0).toUpperCase() + operation.slice(1)} | Niveau: ${niveau.charAt(0).toUpperCase() + niveau.slice(1)}</h3>`;
             
             // Génération des exercices
             exercices = genererExercices(operation, niveau);
@@ -255,14 +255,14 @@
         // Afficher un exercice
         function afficherUnExercice(exercice) {
             const exerciceContainer = document.getElementById('exercice-container');
-            exerciceContainer.innerHTML = 
+            exerciceContainer.innerHTML = `
                 <div class="exercice">
                     <p>${exercice.a} ${exercice.operateur} ${exercice.b} = ?</p>
                     <input type="number" id="reponse" placeholder="Votre réponse">
                     <button onclick="verifierReponse(${exercice.a}, ${exercice.b}, ${exercice.reponse})">Vérifier</button>
                     <p id="resultat" class="resultat"></p>
                 </div>
-            ;
+            `;
             document.getElementById('suivant').style.display = 'none';
         }
 
@@ -275,7 +275,7 @@
                 resultatDiv.textContent = "Bravo, c'est la bonne réponse !";
                 resultatDiv.style.color = 'green';
             } else {
-                resultatDiv.textContent = Désolé, la bonne réponse était ${reponse}.;
+                resultatDiv.textContent = `Désolé, la bonne réponse était ${reponse}.`;
                 resultatDiv.style.color = 'red';
             }
             
