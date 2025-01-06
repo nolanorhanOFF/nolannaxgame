@@ -107,7 +107,6 @@
             font-size: 1.5em;
         }
 
-        /* Vidéo en pleine largeur avec un style simple */
         video {
             width: 100%;
             max-width: 800px;
@@ -115,12 +114,10 @@
             border-radius: 8px;
         }
 
-        /* Cacher la section après que la vidéo soit terminée */
         #intro.hidden {
             display: none;
         }
 
-        /* Style pour le bouton Retour */
         .btn-retour {
             font-size: 18px;
             margin-bottom: 20px;
@@ -145,42 +142,31 @@
         </nav>
     </header>
 
-    <!-- Section avec la vidéo d'introduction -->
     <section id="intro">
         <h2>Bienvenue sur Numérixa</h2>
         <p>Une petite introduction avant de commencer...</p>
-
-        <!-- Lecture de la vidéo -->
         <video id="intro-video" controls>
             <source src="intro.mp4" type="video/mp4">
             Votre navigateur ne supporte pas la vidéo.
         </video>
     </section>
 
-    <!-- Section de choix des niveaux, initialement cachée -->
     <section id="choix-niveau" style="display:none;">
         <h2>Sélectionnez votre exercice</h2>
         <div id="niveau-message"></div>
-
-        <!-- Boutons pour choisir les exercices -->
         <button onclick="choisirExercice('addition', 'facile')">Addition Facile</button>
         <button onclick="choisirExercice('soustraction', 'facile')">Soustraction Facile</button>
         <button onclick="choisirExercice('multiplication', 'facile')">Multiplication Facile</button>
-        
         <button onclick="choisirExercice('addition', 'moyen')">Addition Moyen</button>
         <button onclick="choisirExercice('soustraction', 'moyen')">Soustraction Moyen</button>
         <button onclick="choisirExercice('multiplication', 'moyen')">Multiplication Moyen</button>
-
         <button onclick="choisirExercice('addition', 'difficile')">Addition Difficile</button>
         <button onclick="choisirExercice('soustraction', 'difficile')">Soustraction Difficile</button>
         <button onclick="choisirExercice('multiplication', 'difficile')">Multiplication Difficile</button>
     </section>
 
-    <!-- Section des exercices qui apparaîtra après avoir sélectionné un exercice -->
     <section id="niveau-selection" style="display:none;">
-        <!-- Bouton pour revenir en arrière -->
         <button class="btn-retour" onclick="revenirASelection()">⬅️ Retour</button>
-
         <h2>Exercice en cours</h2>
         <div id="exercice-container"></div>
         <button id="suivant" onclick="suivantExercice()" style="display:none;">Exercice Suivant</button>
@@ -191,119 +177,58 @@
     </footer>
 
     <script>
-        // Variables globales
         let operation, niveau;
         let exercices;
         let currentIndex = 0;
 
-        // Fonction exécutée au chargement de la page
         window.onload = () => {
-            // Affichage du choix de niveau et des exercices après la vidéo
             document.getElementById('intro-video').addEventListener('ended', () => {
                 document.getElementById('intro').classList.add('hidden');
                 document.getElementById('choix-niveau').style.display = 'block';
             });
         };
 
-        // Fonction pour afficher les exercices en fonction du bouton sélectionné
         function afficherExercices(operation, niveau) {
-            const niveauMessage = document.getElementById('niveau-message');
             const exerciceContainer = document.getElementById('exercice-container');
-            
-            niveauMessage.innerHTML = `<h3>Opération: ${operation.charAt(0).toUpperCase() + operation.slice(1)} | Niveau: ${niveau.charAt(0).toUpperCase() + niveau.slice(1)}</h3>`;
-            
-            // Génération des exercices
             exercices = genererExercices(operation, niveau);
-            
-            // Affichage du premier exercice
+            currentIndex = 0;
             afficherUnExercice(exercices[currentIndex]);
         }
 
-        // Générer des exercices mathématiques selon l'opération et le niveau
         function genererExercices(operation, niveau) {
             let exercices = [];
             for (let i = 0; i < 5; i++) {
-                let a, b, reponse;
-                if (operation === 'addition') {
-                    a = Math.floor(Math.random() * 10) + 1;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    reponse = a + b;
-                } else if (operation === 'soustraction') {
-                    a = Math.floor(Math.random() * 20) + 10;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    reponse = a - b;
-                } else if (operation === 'multiplication') {
-                    a = Math.floor(Math.random() * 10) + 1;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    reponse = a * b;
-                }
-
-                // Adapter la difficulté
-                if (niveau === 'moyen') {
-                    a = Math.floor(Math.random() * 20) + 1;
-                    b = Math.floor(Math.random() * 20) + 1;
-                } else if (niveau === 'difficile') {
-                    a = Math.floor(Math.random() * 50) + 1;
-                    b = Math.floor(Math.random() * 50) + 1;
-                }
-
-                exercices.push({ a, b, operateur: operation === 'addition' ? '+' : (operation === 'soustraction' ? '-' : '×'), reponse });
+                let a = Math.floor(Math.random() * 10) + 1;
+                let b = Math.floor(Math.random() * 10) + 1;
+                let reponse = 0;
+                if (operation === 'addition') reponse = a + b;
+                if (operation === 'soustraction') reponse = a - b;
+                if (operation === 'multiplication') reponse = a * b;
+                exercices.push({ a, b, operateur: operation, reponse });
             }
             return exercices;
         }
 
-        // Afficher un exercice
         function afficherUnExercice(exercice) {
             const exerciceContainer = document.getElementById('exercice-container');
             exerciceContainer.innerHTML = `
                 <div class="exercice">
                     <p>${exercice.a} ${exercice.operateur} ${exercice.b} = ?</p>
                     <input type="number" id="reponse" placeholder="Votre réponse">
-                    <button onclick="verifierReponse(${exercice.a}, ${exercice.b}, ${exercice.reponse})">Vérifier</button>
-                    <p id="resultat" class="resultat"></p>
+                    <button onclick="verifierReponse(${exercice.reponse})">Vérifier</button>
                 </div>
             `;
-            document.getElementById('suivant').style.display = 'none';
         }
 
-        // Vérifier la réponse de l'utilisateur
-        function verifierReponse(a, b, reponse) {
+        function verifierReponse(reponse) {
             const userResponse = parseInt(document.getElementById('reponse').value);
-            const resultatDiv = document.getElementById('resultat');
-            
+            const resultat = document.createElement('p');
             if (userResponse === reponse) {
-                resultatDiv.textContent = "Bravo, c'est la bonne réponse !";
-                resultatDiv.style.color = 'green';
+                resultat.textContent = "Bravo, bonne réponse !";
             } else {
-                resultatDiv.textContent = `Désolé, la bonne réponse était ${reponse}.`;
-                resultatDiv.style.color = 'red';
+                resultat.textContent = "Dommage, la bonne réponse était " + reponse;
             }
-            
-            document.getElementById('suivant').style.display = 'block';
-        }
-
-        // Passer à l'exercice suivant
-        function suivantExercice() {
-            currentIndex++;
-            if (currentIndex < exercices.length) {
-                afficherUnExercice(exercices[currentIndex]);
-            } else {
-                document.getElementById('niveau-selection').innerHTML = "<p>Félicitations, vous avez terminé tous les exercices !</p>";
-                document.getElementById('suivant').style.display = 'none';
-            }
-        }
-
-        // Fonction pour revenir à la sélection des exercices
-        function revenirASelection() {
-            document.getElementById('niveau-selection').style.display = 'none';
-            document.getElementById('choix-niveau').style.display = 'block';
-        }
-
-        // Fonction pour choisir un exercice (en fonction du type et du niveau)
-        function choisirExercice(operation, niveau) {
-            document.getElementById('choix-niveau').style.display = 'none';
-            document.getElementById('niveau-selection').style.display = 'block';
-            afficherExercices(operation, niveau);
+            document.getElementById('exercice-container').appendChild(resultat);
         }
     </script>
 </body>
