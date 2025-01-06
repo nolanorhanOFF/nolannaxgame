@@ -1,223 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numérixa</title>
-    <link rel="icon" href="favicon.ico">
+    <title>Numérixa - Site de Mathématiques</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, #121212, #1e1e1e);
-            color: #ffffff;
         }
+
         header {
-            background: #222;
+            background-color: #4CAF50;
+            color: white;
             padding: 20px;
             text-align: center;
         }
-        h1 {
-            margin: 0;
-            color: #f0db4f;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+        header h1 {
+            font-size: 2.5em;
         }
-        .container {
-            padding: 20px;
-            text-align: center;
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
         }
-        .button {
-            display: inline-block;
-            margin: 10px;
-            padding: 15px 30px;
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
             border: none;
-            border-radius: 25px;
-            background: #f0db4f;
-            color: #222;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
         }
-        .button:hover {
-            background: #e5c643;
+
+        button:hover {
+            background-color: #45a049;
         }
-        .arrow {
-            margin-top: 20px;
-            font-size: 24px;
-            color: #f0db4f;
-            cursor: pointer;
-            display: inline-block;
-            transition: transform 0.2s;
-        }
-        .arrow:hover {
-            transform: translateY(-5px);
-        }
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-        table th, table td {
-            border: 1px solid #555;
-            padding: 10px;
+
+        #intro {
             text-align: center;
+            margin-top: 30px;
         }
-        table th {
-            background: #333;
-            color: #f0db4f;
-        }
-        #feedback {
+
+        #choix-niveau {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
             margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
         }
+
+        #choix-niveau button {
+            width: 250px;
+            font-size: 16px;
+        }
+
         footer {
-            background: #222;
-            color: #f0db4f;
+            background-color: #333;
+            color: white;
             text-align: center;
-            padding: 10px 0;
+            padding: 10px;
             position: fixed;
-            bottom: 0;
             width: 100%;
+            bottom: 0;
+        }
+
+        .exercice {
+            margin: 15px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .resultat {
+            font-size: 18px;
+            color: green;
+            margin-top: 10px;
+        }
+
+        #exercice-container {
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.5em;
+        }
+
+        /* Vidéo en pleine largeur avec un style simple */
+        video {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Cacher la section après que la vidéo soit terminée */
+        #intro.hidden {
+            display: none;
+        }
+
+        /* Style pour le bouton Retour */
+        .btn-retour {
+            font-size: 18px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-retour:hover {
+            background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Numérixa</h1>
+        <p>Un site d'exercices de mathématiques pour tous les niveaux</p>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<header>
-    <h1>Numérixa</h1>
-</header>
+    <!-- Section avec la vidéo d'introduction -->
+    <section id="intro">
+        <h2>Bienvenue sur Numérixa</h2>
+        <p>Une petite introduction avant de commencer...</p>
 
-<div class="container" id="start-screen">
-    <h2>Choisissez votre opération :</h2>
-    <button class="button" onclick="chooseOperation('addition')">Addition</button>
-    <button class="button" onclick="chooseOperation('soustraction')">Soustraction</button>
-    <button class="button" onclick="chooseOperation('multiplication')">Multiplication</button>
-    <button class="button" onclick="chooseOperation('mixte')">Mixte</button>
-</div>
+        <!-- Lecture de la vidéo -->
+        <video id="intro-video" controls>
+            <source src="intro.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la vidéo.
+        </video>
+    </section>
 
-<div class="container" id="difficulty-screen" style="display: none;">
-    <h2>Choisissez une difficulté :</h2>
-    <button class="button" onclick="startGame('easy')">Facile</button>
-    <button class="button" onclick="startGame('medium')">Moyen</button>
-    <button class="button" onclick="startGame('hard')">Difficile</button>
-    <div class="arrow" onclick="showStartScreen()">&#x21A9; Retour</div>
-</div>
+    <!-- Section de choix des niveaux, initialement cachée -->
+    <section id="choix-niveau" style="display:none;">
+        <h2>Sélectionnez votre exercice</h2>
+        <div id="niveau-message"></div>
 
-<div class="container" id="game-screen" style="display: none;">
-    <h2 id="question"></h2>
-    <input type="number" id="answer" placeholder="Votre réponse">
-    <button class="button" onclick="submitAnswer()">Valider</button>
-    <div class="arrow" onclick="showStartScreen()">&#x21A9; Retour</div>
-    <div id="feedback"></div>
-</div>
+        <!-- Boutons pour choisir les exercices -->
+        <button onclick="choisirExercice('addition', 'facile')">Addition Facile</button>
+        <button onclick="choisirExercice('soustraction', 'facile')">Soustraction Facile</button>
+        <button onclick="choisirExercice('multiplication', 'facile')">Multiplication Facile</button>
+        
+        <button onclick="choisirExercice('addition', 'moyen')">Addition Moyen</button>
+        <button onclick="choisirExercice('soustraction', 'moyen')">Soustraction Moyen</button>
+        <button onclick="choisirExercice('multiplication', 'moyen')">Multiplication Moyen</button>
 
-<div class="container" id="score-screen" style="display: none;">
-    <h2>Tableau des Scores</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Pseudo</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody id="score-table-body">
-            <!-- Les scores seront insérés ici -->
-        </tbody>
-    </table>
-    <div class="arrow" onclick="showStartScreen()">&#x21A9; Retour</div>
-</div>
+        <button onclick="choisirExercice('addition', 'difficile')">Addition Difficile</button>
+        <button onclick="choisirExercice('soustraction', 'difficile')">Soustraction Difficile</button>
+        <button onclick="choisirExercice('multiplication', 'difficile')">Multiplication Difficile</button>
+    </section>
 
-<audio id="correct-sound" src="music/bonnereponse.mp3"></audio>
-<audio id="wrong-sound" src="music/mauvaisereponse.mp3"></audio>
+    <!-- Section des exercices qui apparaîtra après avoir sélectionné un exercice -->
+    <section id="niveau-selection" style="display:none;">
+        <!-- Bouton pour revenir en arrière -->
+        <button class="btn-retour" onclick="revenirASelection()">⬅️ Retour</button>
 
-<script>
-    let currentOperation = '';
-    let currentDifficulty = '';
-    let score = 0;
+        <h2>Exercice en cours</h2>
+        <div id="exercice-container"></div>
+        <button id="suivant" onclick="suivantExercice()" style="display:none;">Exercice Suivant</button>
+    </section>
 
-    function chooseOperation(operation) {
-        currentOperation = operation;
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('difficulty-screen').style.display = 'block';
-    }
+    <footer>
+        <p>&copy; 2025 Numérixa. Tous droits réservés.</p>
+    </footer>
 
-    function startGame(difficulty) {
-        currentDifficulty = difficulty;
-        score = 0;
-        document.getElementById('difficulty-screen').style.display = 'none';
-        document.getElementById('game-screen').style.display = 'block';
-        generateQuestion();
-    }
+    <script>
+        // Variables globales
+        let operation, niveau;
+        let exercices;
+        let currentIndex = 0;
 
-    function generateQuestion() {
-        let num1 = Math.ceil(Math.random() * 10);
-        let num2 = Math.ceil(Math.random() * 10);
+        // Fonction exécutée au chargement de la page
+        window.onload = () => {
+            // Affichage du choix de niveau et des exercices après la vidéo
+            document.getElementById('intro-video').addEventListener('ended', () => {
+                document.getElementById('intro').classList.add('hidden');
+                document.getElementById('choix-niveau').style.display = 'block';
+            });
+        };
 
-        let question;
-
-        switch (currentOperation) {
-            case 'addition':
-                question = `${num1} + ${num2}`;
-                break;
-            case 'soustraction':
-                question = `${Math.max(num1, num2)} - ${Math.min(num1, num2)}`;
-                break;
-            case 'multiplication':
-                question = `${num1} x ${num2}`;
-                break;
-            case 'mixte':
-                const operations = ['+', '-', 'x'];
-                const randomOp = operations[Math.floor(Math.random() * operations.length)];
-                question = randomOp === '+' ? `${num1} + ${num2}` :
-                          randomOp === '-' ? `${Math.max(num1, num2)} - ${Math.min(num1, num2)}` :
-                          `${num1} x ${num2}`;
-                break;
+        // Fonction pour afficher les exercices en fonction du bouton sélectionné
+        function afficherExercices(operation, niveau) {
+            const niveauMessage = document.getElementById('niveau-message');
+            const exerciceContainer = document.getElementById('exercice-container');
+            
+            niveauMessage.innerHTML = `<h3>Opération: ${operation.charAt(0).toUpperCase() + operation.slice(1)} | Niveau: ${niveau.charAt(0).toUpperCase() + niveau.slice(1)}</h3>`;
+            
+            // Génération des exercices
+            exercices = genererExercices(operation, niveau);
+            
+            // Affichage du premier exercice
+            afficherUnExercice(exercices[currentIndex]);
         }
 
-        document.getElementById('question').textContent = question;
-    }
+        // Générer des exercices mathématiques selon l'opération et le niveau
+        function genererExercices(operation, niveau) {
+            let exercices = [];
+            for (let i = 0; i < 5; i++) {
+                let a, b, reponse;
+                if (operation === 'addition') {
+                    a = Math.floor(Math.random() * 10) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    reponse = a + b;
+                } else if (operation === 'soustraction') {
+                    a = Math.floor(Math.random() * 20) + 10;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    reponse = a - b;
+                } else if (operation === 'multiplication') {
+                    a = Math.floor(Math.random() * 10) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    reponse = a * b;
+                }
 
-    function submitAnswer() {
-        const question = document.getElementById('question').textContent;
-        const userAnswer = parseInt(document.getElementById('answer').value);
-        const correctSound = document.getElementById('correct-sound');
-        const wrongSound = document.getElementById('wrong-sound');
-        let correctAnswer;
+                // Adapter la difficulté
+                if (niveau === 'moyen') {
+                    a = Math.floor(Math.random() * 20) + 1;
+                    b = Math.floor(Math.random() * 20) + 1;
+                } else if (niveau === 'difficile') {
+                    a = Math.floor(Math.random() * 50) + 1;
+                    b = Math.floor(Math.random() * 50) + 1;
+                }
 
-        if (question.includes('+')) correctAnswer = parseInt(question.split('+')[0]) + parseInt(question.split('+')[1]);
-        if (question.includes('-')) correctAnswer = parseInt(question.split('-')[0]) - parseInt(question.split('-')[1]);
-        if (question.includes('x')) correctAnswer = parseInt(question.split('x')[0]) * parseInt(question.split('x')[1]);
-
-        const feedback = document.getElementById('feedback');
-
-        if (userAnswer === correctAnswer) {
-            score++;
-            feedback.textContent = 'Bonne réponse ! ✅';
-            feedback.style.color = 'lime';
-            correctSound.play();
-        } else {
-            feedback.textContent = `Mauvaise réponse ! ❌ La bonne réponse était ${correctAnswer}`;
-            feedback.style.color = 'red';
-            wrongSound.play();
+                exercices.push({ a, b, operateur: operation === 'addition' ? '+' : (operation === 'soustraction' ? '-' : '×'), reponse });
+            }
+            return exercices;
         }
 
-        document.getElementById('answer').value = '';
-        generateQuestion();
-    }
+        // Afficher un exercice
+        function afficherUnExercice(exercice) {
+            const exerciceContainer = document.getElementById('exercice-container');
+            exerciceContainer.innerHTML = `
+                <div class="exercice">
+                    <p>${exercice.a} ${exercice.operateur} ${exercice.b} = ?</p>
+                    <input type="number" id="reponse" placeholder="Votre réponse">
+                    <button onclick="verifierReponse(${exercice.a}, ${exercice.b}, ${exercice.reponse})">Vérifier</button>
+                    <p id="resultat" class="resultat"></p>
+                </div>
+            `;
+            document.getElementById('suivant').style.display = 'none';
+        }
 
-    function showStartScreen() {
-        document.getElementById('start-screen').style.display = 'block';
-        document.getElementById('difficulty-screen').style.display = 'none';
-        document.getElementById('game-screen').style.display = 'none';
-        document.getElementById('score-screen').style.display = 'none';
-    }
-</script>
+        // Vérifier la réponse de l'utilisateur
+        function verifierReponse(a, b, reponse) {
+            const userResponse = parseInt(document.getElementById('reponse').value);
+            const resultatDiv = document.getElementById('resultat');
+            
+            if (userResponse === reponse) {
+                resultatDiv.textContent = "Bravo, c'est la bonne réponse !";
+                resultatDiv.style.color = 'green';
+            } else {
+                resultatDiv.textContent = `Désolé, la bonne réponse était ${reponse}.`;
+                resultatDiv.style.color = 'red';
+            }
+            
+            document.getElementById('suivant').style.display = 'block';
+        }
 
-<footer>
-    © 2024 Numérixa
-</footer>
+        // Passer à l'exercice suivant
+        function suivantExercice() {
+            currentIndex++;
+            if (currentIndex < exercices.length) {
+                afficherUnExercice(exercices[currentIndex]);
+            } else {
+                document.getElementById('niveau-selection').innerHTML = "<p>Félicitations, vous avez terminé tous les exercices !</p>";
+                document.getElementById('suivant').style.display = 'none';
+            }
+        }
 
+        // Fonction pour revenir à la sélection des exercices
+        function revenirASelection() {
+            document.getElementById('niveau-selection').style.display = 'none';
+            document.getElementById('choix-niveau').style.display = 'block';
+        }
+
+        // Fonction pour choisir un exercice (en fonction du type et du niveau)
+        function choisirExercice(operation, niveau) {
+            document.getElementById('choix-niveau').style.display = 'none';
+            document.getElementById('niveau-selection').style.display = 'block';
+            afficherExercices(operation, niveau);
+        }
+    </script>
 </body>
 </html>
