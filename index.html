@@ -182,11 +182,25 @@
         let currentIndex = 0;
 
         window.onload = () => {
-            document.getElementById('intro-video').addEventListener('ended', () => {
+            const introVideo = document.getElementById('intro-video');
+            introVideo.addEventListener('ended', () => {
                 document.getElementById('intro').classList.add('hidden');
                 document.getElementById('choix-niveau').style.display = 'block';
             });
         };
+
+        function choisirExercice(selectedOperation, selectedNiveau) {
+            operation = selectedOperation;
+            niveau = selectedNiveau;
+            document.getElementById('choix-niveau').style.display = 'none';
+            document.getElementById('niveau-selection').style.display = 'block';
+            afficherExercices(operation, niveau);
+        }
+
+        function revenirASelection() {
+            document.getElementById('niveau-selection').style.display = 'none';
+            document.getElementById('choix-niveau').style.display = 'block';
+        }
 
         function afficherExercices(operation, niveau) {
             const exerciceContainer = document.getElementById('exercice-container');
@@ -201,10 +215,18 @@
                 let a = Math.floor(Math.random() * 10) + 1;
                 let b = Math.floor(Math.random() * 10) + 1;
                 let reponse = 0;
-                if (operation === 'addition') reponse = a + b;
-                if (operation === 'soustraction') reponse = a - b;
-                if (operation === 'multiplication') reponse = a * b;
-                exercices.push({ a, b, operateur: operation, reponse });
+                let operateur = '';
+                if (operation === 'addition') {
+                    reponse = a + b;
+                    operateur = '+';
+                } else if (operation === 'soustraction') {
+                    reponse = a - b;
+                    operateur = '-';
+                } else if (operation === 'multiplication') {
+                    reponse = a * b;
+                    operateur = '×';
+                }
+                exercices.push({ a, b, operateur, reponse });
             }
             return exercices;
         }
@@ -225,10 +247,22 @@
             const resultat = document.createElement('p');
             if (userResponse === reponse) {
                 resultat.textContent = "Bravo, bonne réponse !";
+                resultat.style.color = "green";
             } else {
                 resultat.textContent = "Dommage, la bonne réponse était " + reponse;
+                resultat.style.color = "red";
             }
             document.getElementById('exercice-container').appendChild(resultat);
+        }
+
+        function suivantExercice() {
+            currentIndex++;
+            if (currentIndex < exercices.length) {
+                afficherUnExercice(exercices[currentIndex]);
+            } else {
+                alert("Félicitations ! Vous avez terminé tous les exercices.");
+                revenirASelection();
+            }
         }
     </script>
 </body>
